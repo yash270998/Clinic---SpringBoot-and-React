@@ -1,7 +1,12 @@
 package com.clinicalsapi.entities;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Patient {
@@ -10,6 +15,8 @@ public class Patient {
 	private String lastName;
 	private String firstName;
 	private int age;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "patient")
+	private List<ClinicalData> clinicalData;
 
 	public int getId() {
 		return id;

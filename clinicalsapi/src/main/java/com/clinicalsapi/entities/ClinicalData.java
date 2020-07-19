@@ -3,7 +3,10 @@ package com.clinicalsapi.entities;
 import java.sql.Timestamp;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class ClinicalData {
@@ -12,6 +15,9 @@ public class ClinicalData {
 	private String componentName;
 	private String componentValue;
 	private Timestamp measuredDateTime;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "patient_id", nullable = false)
+	private Patient patient;
 
 	public int getId() {
 		return id;
