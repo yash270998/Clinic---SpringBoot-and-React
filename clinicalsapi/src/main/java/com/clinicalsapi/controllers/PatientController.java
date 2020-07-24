@@ -31,22 +31,35 @@ public class PatientController {
 	public List<Patient> getPatients() {
 		return patientRepo.findAll();
 	}
-	@RequestMapping(value = "/patients/{id}",method = RequestMethod.GET)
+
+	@RequestMapping(value = "/patients/{id}", method = RequestMethod.GET)
 	public Patient getPatient(@PathVariable("id") int id) {
 		return patientRepo.findById(id).get();
 	}
-	@RequestMapping(value = "/patients",method = RequestMethod.POST)
+
+	@RequestMapping(value = "/patients", method = RequestMethod.POST)
 	public Patient savePatient(@RequestBody Patient patient) {
-		System.out.println("LOL"+patient.getFirstName());
+		System.out.println("LOL" + patient.getFirstName());
 		return patientRepo.save(patient);
 	}
-	@RequestMapping(value = "/patients/anal{id}",method = RequestMethod.GET)
+
+	@RequestMapping(value = "/patients/anal{id}", method = RequestMethod.GET)
 	public Patient analyze(@PathVariable("id") int id) {
 		Patient patient = patientRepo.findById(id).get();
 		List<ClinicalData> clinicalData = patient.getClinicalData();
 		ArrayList<ClinicalData> duplicateClinicalData = new ArrayList<>(clinicalData);
-		for(ClinicalData eachEntry: duplicateClinicalData) {
-			
+		for (ClinicalData eachEntry : duplicateClinicalData) {
+			if (eachEntry.getComponentName().equals("hw")) {
+				String[] heightWeigth = eachEntry.getComponentValue().split("/");
+				if (heightWeigth != null && heightWeigth.length > 1) {
+					float HeightInMetres = Float.parseFloat(heightWeigth[0]) * 0.4536F;
+					float bmi = Float.parseFloat(heightWeigth[1]) / (HeightInMetres * HeightInMetres);
+					ClinicalData bmiData = new ClinicalData();
+					bmiData.setComponentName("bmi");
+					bmiData.setComponentValue(Float.toString(bmi));
+					clinicalData.add(bmiData);
+				}
+			}
 		}
 		return patient;
 	}
