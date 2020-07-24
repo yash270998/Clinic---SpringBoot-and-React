@@ -1,5 +1,6 @@
 package com.clinicalsapi.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import com.clinicalsapi.entities.ClinicalData;
 import com.clinicalsapi.entities.Patient;
 import com.clinicalsapi.repos.ClinicalDataRepository;
 import com.clinicalsapi.repos.PatientRepository;
+import com.clinicalsapi.util.BMICalculator;
 
 @RestController
 @RequestMapping("/api")
@@ -41,7 +43,15 @@ public class ClinicalDataController {
 	@RequestMapping(value = "/clinicals/{patientId}/{componentName}")
 	public List<ClinicalData> getClinicalData(@PathVariable("patientId") int patientId,
 			@PathVariable("componentName") String componentName) {
-		List<ClinicalData> clinicalData = clinicalDataRepository.findByPatientIdAndComponentNameOrderByMeasuredDateTime(patientId,componentName);
+		if(componentName.equals("bmi")) {
+			componentName = "hw";
+		}
+		List<ClinicalData> clinicalData = clinicalDataRepository
+				.findByPatientIdAndComponentNameOrderByMeasuredDateTime(patientId, componentName);
+		ArrayList<ClinicalData> duplicateClinicalData = new ArrayList<>(clinicalData);
+		for (ClinicalData eachEntry : duplicateClinicalData) {
+			BMICalculator.calculateBMI(duplicateClinicalData, eachEntry);
+		}
 		return null;
 	}
 }

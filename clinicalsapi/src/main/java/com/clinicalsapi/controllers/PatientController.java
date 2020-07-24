@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.clinicalsapi.entities.ClinicalData;
 import com.clinicalsapi.entities.Patient;
 import com.clinicalsapi.repos.PatientRepository;
+import com.clinicalsapi.util.BMICalculator;
 
 @RestController
 @RequestMapping("/api")
@@ -59,19 +60,23 @@ public class PatientController {
 				filters.put(eachEntry.getComponentName(), null);
 			}
 			
-			if (eachEntry.getComponentName().equals("hw")) {
-				String[] heightWeigth = eachEntry.getComponentValue().split("/");
-				if (heightWeigth != null && heightWeigth.length > 1) {
-					float HeightInMetres = Float.parseFloat(heightWeigth[0]) * 0.4536F;
-					float bmi = Float.parseFloat(heightWeigth[1]) / (HeightInMetres * HeightInMetres);
-					ClinicalData bmiData = new ClinicalData();
-					bmiData.setComponentName("bmi");
-					bmiData.setComponentValue(Float.toString(bmi));
-					clinicalData.add(bmiData);
-				}
-			}
+			BMICalculator.calculateBMI(clinicalData, eachEntry);
 		}
 		filters.clear();
 		return patient;
+	}
+
+	private void calculateBMI(List<ClinicalData> clinicalData, ClinicalData eachEntry) {
+		if (eachEntry.getComponentName().equals("hw")) {
+			String[] heightWeigth = eachEntry.getComponentValue().split("/");
+			if (heightWeigth != null && heightWeigth.length > 1) {
+				float HeightInMetres = Float.parseFloat(heightWeigth[0]) * 0.4536F;
+				float bmi = Float.parseFloat(heightWeigth[1]) / (HeightInMetres * HeightInMetres);
+				ClinicalData bmiData = new ClinicalData();
+				bmiData.setComponentName("bmi");
+				bmiData.setComponentValue(Float.toString(bmi));
+				clinicalData.add(bmiData);
+			}
+		}
 	}
 }
