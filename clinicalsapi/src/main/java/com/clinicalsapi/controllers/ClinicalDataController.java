@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import com.clinicalsapi.util.BMICalculator;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin
 public class ClinicalDataController {
 	private ClinicalDataRepository clinicalDataRepository;
 	private PatientRepository patientRepository;
@@ -40,7 +42,7 @@ public class ClinicalDataController {
 		return clinicalDataRepository.save(clinicalData);
 	}
 
-	@RequestMapping(value = "/clinicals/{patientId}/{componentName}")
+	@RequestMapping(value = "/clinicals/{patientId}/{componentName}", method = RequestMethod.GET)
 	public List<ClinicalData> getClinicalData(@PathVariable("patientId") int patientId,
 			@PathVariable("componentName") String componentName) {
 		if(componentName.equals("bmi")) {
@@ -52,6 +54,6 @@ public class ClinicalDataController {
 		for (ClinicalData eachEntry : duplicateClinicalData) {
 			BMICalculator.calculateBMI(duplicateClinicalData, eachEntry);
 		}
-		return null;
+		return clinicalData;
 	}
 }
