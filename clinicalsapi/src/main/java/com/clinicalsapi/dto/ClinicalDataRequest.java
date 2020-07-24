@@ -1,14 +1,14 @@
 package com.clinicalsapi.dto;
 
 public class ClinicalDataRequest {
-	private String componenetName;
+	private String componentName;
 	private String componentValue;
 	private int id;
-	public String getComponenetName() {
-		return componenetName;
+	public String getComponentName() {
+		return componentName;
 	}
-	public void setComponenetName(String componenetName) {
-		this.componenetName = componenetName;
+	public void setComponentName(String componentName) {
+		this.componentName = componentName;
 	}
 	public String getComponentValue() {
 		return componentValue;

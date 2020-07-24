@@ -27,9 +27,10 @@ public class ClinicalDataController {
 
 	@RequestMapping(value = "/clinicals", method = RequestMethod.POST)
 	public ClinicalData saveClinicalData(@RequestBody ClinicalDataRequest request) {
+		System.out.println("WTF"+request.getId() + request.getComponentName());
 		Patient patient = patientRepository.findById(request.getId()).get();
 		ClinicalData clinicalData = new ClinicalData();
-		clinicalData.setComponentName(request.getComponenetName());
+		clinicalData.setComponentName(request.getComponentName());
 		clinicalData.setComponentValue(request.getComponentValue());
 		clinicalData.setPatient(patient);
 		return clinicalDataRepository.save(clinicalData);
