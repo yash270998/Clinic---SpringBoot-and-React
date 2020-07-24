@@ -35,6 +35,7 @@ public class PatientController {
 	}
 	@RequestMapping(value = "/patients",method = RequestMethod.POST)
 	public Patient savePatient(@RequestBody Patient patient) {
+		System.out.println("LOL"+patient.getFirstName());
 		return patientRepo.save(patient);
 	}
 }
