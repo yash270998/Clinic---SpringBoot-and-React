@@ -1,10 +1,13 @@
 package com.clinicalsapi.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.websocket.server.PathParam;
 
+import org.hibernate.annotations.Filters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +24,7 @@ import com.clinicalsapi.repos.PatientRepository;
 public class PatientController {
 
 	private PatientRepository patientRepo;
-
+	Map<String, String> filters = new HashMap<>();
 	@Autowired
 	PatientController(PatientRepository patientRepository) {
 		this.patientRepo = patientRepository;
@@ -43,12 +46,19 @@ public class PatientController {
 		return patientRepo.save(patient);
 	}
 
-	@RequestMapping(value = "/patients/anal{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/patients/anal/{id}", method = RequestMethod.GET)
 	public Patient analyze(@PathVariable("id") int id) {
 		Patient patient = patientRepo.findById(id).get();
 		List<ClinicalData> clinicalData = patient.getClinicalData();
 		ArrayList<ClinicalData> duplicateClinicalData = new ArrayList<>(clinicalData);
 		for (ClinicalData eachEntry : duplicateClinicalData) {
+			if(filters.containsKey(eachEntry.getComponentName())) {
+				clinicalData.remove(eachEntry);
+				continue;
+			}else {
+				filters.put(eachEntry.getComponentName(), null);
+			}
+			
 			if (eachEntry.getComponentName().equals("hw")) {
 				String[] heightWeigth = eachEntry.getComponentValue().split("/");
 				if (heightWeigth != null && heightWeigth.length > 1) {
@@ -61,6 +71,7 @@ public class PatientController {
 				}
 			}
 		}
+		filters.clear();
 		return patient;
 	}
 }

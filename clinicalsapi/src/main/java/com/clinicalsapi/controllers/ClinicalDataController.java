@@ -1,7 +1,9 @@
 package com.clinicalsapi.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,7 +29,7 @@ public class ClinicalDataController {
 
 	@RequestMapping(value = "/clinicals", method = RequestMethod.POST)
 	public ClinicalData saveClinicalData(@RequestBody ClinicalDataRequest request) {
-		System.out.println("WTF"+request.getId() + request.getComponentName());
+		System.out.println("WTF" + request.getId() + request.getComponentName());
 		Patient patient = patientRepository.findById(request.getId()).get();
 		ClinicalData clinicalData = new ClinicalData();
 		clinicalData.setComponentName(request.getComponentName());
@@ -36,4 +38,10 @@ public class ClinicalDataController {
 		return clinicalDataRepository.save(clinicalData);
 	}
 
+	@RequestMapping(value = "/clinicals/{patientId}/{componentName}")
+	public List<ClinicalData> getClinicalData(@PathVariable("patientId") int patientId,
+			@PathVariable("componentName") String componentName) {
+		List<ClinicalData> clinicalData = clinicalDataRepository.findByPatientIdAndComponentNameOrderByMeasuredDateTime(patientId,componentName);
+		return null;
+	}
 }
